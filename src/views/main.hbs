@@ -1,0 +1,34 @@
+<h1 class="text-center">Instagram'83</h1>
+
+<form action="/messagebook" method="POST">
+    {{!-- отправляем данные формы в месседжбук и указываем метод posy (большими буквами) --}}
+    <div class="mb-3">
+        <label for="FormInput" class="form-label">Представьтесь, пожалуйста!</label>
+        <input name="name" type="text" class="form-control" id="FormInput" placeholder="Ваше имя">
+    </div>
+
+    <div class="mb-3">
+        <label for="FormTextarea" class="form-label">Скопируйте в это поле ссылку на изображение</label>
+        <textarea name="picture" class="form-control" id="FormTextarea" rows="1"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="FormTextarea" class="form-label">Оставьте Ваше сообщение</label>
+        <textarea name="message" class="form-control" id="FormTextarea" rows="2"></textarea>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <input class="btn btn-primary " type="submit" value="Отправить">
+    </div>
+</form>
+<hr />
+
+{{#each listOfMessages}}
+<div class="card my-5" style="width: 18rem;">
+    <img src="{{this.picture}}" class="card-img-top" alt="photo">
+    <div class="card-body">
+        <h5 class="card-title">{{this.name}}</h5>
+        <p class="card-text">{{this.message}}</p>
+    </div>
+</div>
+{{/each}}
