@@ -1,0 +1,24 @@
+<ul class="nav justify-content-center mb-5">
+    <li class="nav-item">
+        <a class="nav-link active $nav-link-color:$black" aria-current="page" href="/">Main Page</a>
+    </li>
+    {{#if name}}
+    <li class="nav-item">
+        <a class="nav-link" href="/blog">Blog</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/auth/signout">Log Out</a>
+    </li>
+    {{else}}
+    <li class="nav-item">
+        <a class="nav-link" href="/auth/signin">Log In</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/auth/signup">Create Account</a>
+    </li>
+    {{/if}}
+</ul>
+
+{{!-- добавил конструкцию if, name - это типа имя пользователя (вернее его почта) из глобальной мидлвары в app --}}
+{{!-- Разобраться как подключать SAS переменные к HTML чтобы сменить цвета меню: $nav-link-color:$link-color;
+$nav-link-hover-color:$link-hover-color; --}}

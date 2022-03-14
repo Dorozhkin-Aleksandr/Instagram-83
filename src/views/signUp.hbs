@@ -1,0 +1,11 @@
+{{!-- Страница регистрации --}}
+<div class="d-flex justify-content-center">
+    <form method="POST" action="/auth/signup" class="d-flex flex-column">
+        <input name="email" placeholder="Email" type="email" class=" mb-2" />
+        <input name="name" placeholder="Name" type="text" class=" mb-2" />
+        <input name="password" placeholder="Enter your password" type="password" class=" mb-2" />
+        <button type="submit" class="btn btn-success">Create Account</button>
+    </form>
+</div>
+
+{{!-- важный момент тип кнопки - submit и экшен у формы - "/auth/signup" --}}
