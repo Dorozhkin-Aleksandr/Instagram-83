@@ -63,6 +63,7 @@ server.use((request, response, next) => {
         const currentUser = dbUser.users.find((user) => user.email == currentSession.email)
         //вытащили из БД пользователей почту текущего юзера
         response.locals.name = currentUser.name
+        response.locals.email = currentUser.email
         //для  передачи почты текущего пользователя в страницу ХБС
         //альтернативный вариант передать данные  вторым аргументом в объекте response.render('ххх' {ЗДЕСЬ})
 
@@ -73,15 +74,9 @@ server.use((request, response, next) => {
 
 
 
-
-
-
-
 server.get('/', function (request, response) {
     response.render('main')
 })
-
-
 
 
 
@@ -93,7 +88,7 @@ server.get('/auth/signup', (request, response) => {
 // эта часть блока отвечает за приём данных из пользовательской формы регистрации на сайте
 // данные, которые пользовательотправил через запрос POST перейдут в массив (массив хранится в оперативке ПК)
 // далее сервер формирует сессию и куку для пользователя
-// в самом низу происъодит редирект на главгую страницу
+// в самом низу происходит редирект на главгую страницу
 server.post('/auth/signup', (request, response) => {
     const { name, email, password } = request.body
     dbUser.users.push({
@@ -114,8 +109,6 @@ server.post('/auth/signup', (request, response) => {
 
     response.redirect('/') //редиректим пользователя на главную страницу (для метода пост нельзя применять метод render)
 }) //для принятия данных из формы signUp в объект dbUser
-
-
 
 
 
@@ -156,8 +149,6 @@ server.post('/auth/signin', (request, response) => {
 
 
 
-
-
 //в этом блоке описан выход пользователя из системы
 server.get('/auth/signout', (request, response) => {
     const sidFromUserCookie = request.cookies.sid
@@ -179,26 +170,54 @@ server.get('/auth/signout', (request, response) => {
 
 
 
-// этот большой блок отвечает за переход на страницу блога
+// этот блок отвечает за переход на страницу блога
 server.get('/blog', checkAuth, function (request, response) {
     // checkAuth проверит авторизован ли пользователь
     //const userQueryParameters = request.query //сохраняет в объекте запрос пользователя это было нужно для qw параметров
     let messagesForRender = db.messages
 
     response.render('blog', { listOfMessages: messagesForRender })
-    // отправляем на рендер страницу блога и объект с сообщениями пользователя из второй БД
+    // отправляем на рендер страницу блога и объект с сообщениями пользователя из БД
 })
 
+// этот блок отвечает за приём данных из формы отправки постов
 server.post('/messagebook', (request, response) => {
     const dataFromForm = request.body
 
     db.messages.push(dataFromForm)
-    // db.messages.name = name
-
-    // console.log(dataFromForm)
-    // console.log(db.messages)
-    ///////////////где то здесь надо добавить в объет name
+    // проверил через консоль все данные включая idUser уходят в объект с сообщениями
     response.redirect('/blog')
+})
+
+
+
+
+// ниже обрабатывается запрос из формы от кнопки удаления поста
+server.post('/deletepost', (request, response) => {
+    const idPost = request.body
+    //в переменную idPost отправили, всё что пришло с формы с кнопкой (объект)
+    //должен прийти текст сообщения (в объекте), по нему я буду искать в БД нужный пост для его удаления
+    //самый простой, но не безопасный вариант, сроки реализации поджимают 8)  
+
+    const currentPostIndex = db.messages.findIndex((element) => element.message == idPost.message)
+    //так нашел индекс нужного поста для удаления
+    //напомню, что в моём случае идентификтором поста будет сообщение из него
+    //использую idPost.message так как присланное сообщение находится в объекте с ключем message
+
+    //перед тем, как удалить пост, я делаю проверку соответсвует ли указанный при регистрации пользователем e-mail
+    //адресу почты из поста в БД (ключ idUser):
+    if ((db.messages[currentPostIndex].idUser) == response.locals.email) {
+
+        db.messages.splice(currentPostIndex, 1)
+        //удалил из массива сообщений нужный пост
+        response.redirect('/blog')
+        //после удаления поста переотправляю пользователя обратно в блог на отрисовку данных
+    }
+    else {
+        return response.render('403.hbs')
+        //иначе отправляем на страницу с ошибкой
+    }
+
 })
 
 

@@ -24,6 +24,11 @@
         <input type="hidden" name="name" value="{{name}}">
         {{!-- костыль, который я долго искал, чтобы авторизованный пользователь не указывал повторно своё имя при
         отправке формы --}}
+        <input type="hidden" name="idUser" value="{{email}}">
+        {{!-- попробую самый простой вариант в качестве идентификатора id пользователя выгружать в массив с поставми его
+        почту
+        для того, чтобы левый пользователь не смог удалить чужие сообщения --}}
+
 
         <div class="mb-3">
             <label for="FormTextarea" class="form-label">Скопируйте в это поле ссылку на изображение</label>
@@ -43,10 +48,10 @@
 <hr />
 
 
-{{!-- достаёт из объект имя пользователя, ссылку на картинку и сообщение --}}
+{{!-- достаёт из объекта имя пользователя, ссылку на картинку и сообщение --}}
 {{#each listOfMessages}}
 <div class="container d-flex justify-content-center">
-    <div class="card my-5" style="width: 28rem;">
+    <div class="card my-3" style="width: 28rem;">
         <img src="{{this.picture}}" class="card-img-top" alt="photo">
         <div class="card-body">
             <h5 class="card-title">{{this.name}}</h5>
@@ -54,4 +59,12 @@
         </div>
     </div>
 </div>
+<Form action="/deletepost" method="POST">
+    <input type="hidden" name="message" value="{{this.message}}">
+    {{!-- при нажатии на кнопку удаления поста, отправляю текст удаляемого сообщения,
+    чтобы можно было идентифицировать его в БД (easy вариант)--}}
+    <div class="container d-flex justify-content-center mb-5">
+        <button type="submit" class="btn btn-danger">Удалить сообщение</button>
+    </div>
+</Form>
 {{/each}}
